@@ -73,7 +73,7 @@ window.GX_CONFIG = {
     locationNote: "Exact address provided after booking.",
 
     phoneDisplay: "0416 553 814",
-    phoneHref: "04XXXXXXXX", // number with no spaces for tel: link
+    phoneHref: "0416553814", // number with no spaces for tel: link
 
     email: "youremail@example.com",
 
