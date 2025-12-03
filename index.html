@@ -321,10 +321,18 @@
         const [error, setError] = useState("");
 
         useEffect(() => {
-          if (localStorage.getItem("gx_authed") === "true") {
-            setIsAuthed(true);
-          }
-        }, []);
+  const expiry = localStorage.getItem("gx_authed_until");
+  if (expiry) {
+    const expiryTime = Number(expiry);
+    // If current time is still before expiry → keep user logged in
+    if (!Number.isNaN(expiryTime) && Date.now() < expiryTime) {
+      setIsAuthed(true);
+    } else {
+      // Expired → remove it so they have to log in again
+      localStorage.removeItem("gx_authed_until");
+    }
+  }
+}, []);
 
         const handleLogin = (e) => {
           e.preventDefault();
@@ -571,5 +579,6 @@
     </script>
   </body>
 </html>
+
 
 
