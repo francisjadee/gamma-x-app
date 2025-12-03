@@ -5,13 +5,10 @@
     <title>Gamma X Martial Arts App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- React & Babel via CDN -->
+    <!-- React & Babel via CDN (no install needed) -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <!-- 🔧 Your editable data/config -->
-    <script src="data.js"></script>
 
     <style>
       body {
@@ -259,28 +256,63 @@
     <script type="text/babel">
       const { useState, useEffect } = React;
 
-      // Grab config from data.js
-      const CONFIG = window.GX_CONFIG || {};
-      const {
-        ACCESS_PASSWORD = "GAMMAX2025!",
-        PASSWORD_EXPIRY_MS = 60 * 60 * 1000,
-        CLASS_DATA = [],
-        MEMBERSHIP_PLANS = [],
-        PROMOS = [],
-        CONTACT_INFO = {}
-      } = CONFIG;
+      // 🔒 Change this to whatever password you want to give members
+      const ACCESS_PASSWORD = "GAMMAX2025!";
 
-      const {
-        locationTitle = "St Clair Home Gym",
-        locationLine1 = "St Clair, Penrith City Council, Sydney NSW",
-        locationNote = "Exact address provided after booking.",
-        phoneDisplay = "04XX XXX XXX",
-        phoneHref = "04XXXXXXXX",
-        email = "youremail@example.com",
-        mapsUrl = "#",
-        messengerUrl = "#",
-        socials = {}
-      } = CONTACT_INFO;
+      const CLASS_DATA = [
+        {
+          day: "Monday",
+          classes: [
+            { time: "4:30 PM", name: "Kids Kickboxing", level: "Ages 7–12", location: "St Clair" },
+            { time: "5:30 PM", name: "Teens Kickboxing", level: "Ages 13–17", location: "St Clair" },
+            { time: "6:30 PM", name: "Adults Kickboxing", level: "All Levels", location: "St Clair" }
+          ]
+        },
+        {
+          day: "Wednesday",
+          classes: [
+            { time: "4:30 PM", name: "Kids Kickboxing", level: "Ages 7–12", location: "St Clair" },
+            { time: "5:30 PM", name: "Family Class", level: "Parents & Kids", location: "St Clair" },
+            { time: "6:30 PM", name: "Open Sparring", level: "Invite Only", location: "St Clair" }
+          ]
+        },
+        {
+          day: "Saturday",
+          classes: [
+            { time: "9:00 AM", name: "Kids Kickboxing", level: "Ages 7–12", location: "St Clair" },
+            { time: "10:00 AM", name: "Teens / Adults", level: "Mixed Level", location: "St Clair" }
+          ]
+        }
+      ];
+
+      const MEMBERSHIP_PLANS = [
+        {
+          name: "Kids / Teens",
+          price: "$XX / fortnight",
+          desc: "Unlimited regular classes for kids and teens. Journey to black belt included."
+        },
+        {
+          name: "Adults",
+          price: "$XX / fortnight",
+          desc: "Access to all adult classes and open sparring (invite only)."
+        },
+        {
+          name: "Private 1-on-1",
+          price: "$50 / 30 mins · $65 / 45 mins",
+          desc: "Personalised coaching focused on your goals (fitness, grading, sparring)."
+        }
+      ];
+
+      const PROMOS = [
+        {
+          title: "Join now, pay nothing until 2026",
+          text: "Lock in your spot, start training today. Limited spots available."
+        },
+        {
+          title: "Family Class Coming Soon",
+          text: "Kids and parents train together. Ages 7+. At least one active member per family."
+        }
+      ];
 
       function App() {
         const [tab, setTab] = useState("home");
@@ -288,29 +320,19 @@
         const [isAuthed, setIsAuthed] = useState(false);
         const [error, setError] = useState("");
 
-        // Check if login still valid
         useEffect(() => {
-          const expiry = localStorage.getItem("gx_authed_until");
-          if (expiry) {
-            const expiryTime = Number(expiry);
-            if (!Number.isNaN(expiryTime) && Date.now() < expiryTime) {
-              setIsAuthed(true);
-            } else {
-              localStorage.removeItem("gx_authed_until");
-            }
+          if (localStorage.getItem("gx_authed") === "true") {
+            setIsAuthed(true);
           }
         }, []);
 
         const handleLogin = (e) => {
           e.preventDefault();
           if (passwordInput === ACCESS_PASSWORD) {
-            const expiryMs = PASSWORD_EXPIRY_MS || 60 * 60 * 1000;
-            const oneHourFromNow = Date.now() + expiryMs;
-            localStorage.setItem("gx_authed_until", String(oneHourFromNow));
-
             setIsAuthed(true);
             setError("");
             setPasswordInput("");
+            localStorage.setItem("gx_authed", "true");
           } else {
             setError("Incorrect password. Try again.");
           }
@@ -403,7 +425,7 @@
             <button
               className="primary-btn"
               onClick={() => {
-                window.location.href = messengerUrl;
+                window.location.href = "https://m.me/YOUR_PAGE_LINK_HERE";
               }}
             >
               Message us to book a free trial
@@ -467,7 +489,7 @@
               className="primary-btn secondary"
               onClick={() => {
                 window.location.href =
-                  "mailto:" + email + "?subject=Gamma X Membership Enquiry";
+                  "mailto:YOUR_EMAIL_HERE?subject=Gamma X Membership Enquiry";
               }}
             >
               Email us about memberships
@@ -477,31 +499,31 @@
       }
 
       function Contact() {
-        const socialEntries = Object.values(socials || {});
-
         return (
           <div className="screen">
             <h2>Contact & Location</h2>
             <div className="card">
-              <h3>{locationTitle}</h3>
-              <p>{locationLine1}</p>
-              <p>{locationNote}</p>
+              <h3>St Clair Home Gym</h3>
+              <p>St Clair, Penrith City Council, Sydney NSW</p>
+              <p>Exact address provided after booking.</p>
             </div>
 
             <div className="card">
               <h3>Get in touch</h3>
-              <p>Phone: {phoneDisplay}</p>
-              <p>Email: {email}</p>
+              <p>Phone: 04XX XXX XXX</p>
+              <p>Email: youremail@example.com</p>
               <div className="button-row">
                 <button
                   className="small-btn"
-                  onClick={() => (window.location.href = "tel:" + phoneHref)}
+                  onClick={() => (window.location.href = "tel:04XXXXXXXX")}
                 >
                   Call now
                 </button>
                 <button
                   className="small-btn"
-                  onClick={() => (window.location.href = mapsUrl)}
+                  onClick={() =>
+                    (window.location.href = "https://maps.app.goo.gl/YOUR_MAP_LINK")
+                  }
                 >
                   Open in Maps
                 </button>
@@ -511,13 +533,33 @@
             <div className="card">
               <h3>Socials</h3>
               <ul className="social-list">
-                {socialEntries.map((s, i) => (
-                  <li key={i}>
-                    <a href={s.url} target="_blank" rel="noreferrer">
-                      {s.label}
-                    </a>
-                  </li>
-                ))}
+                <li>
+                  <a
+                    href="https://instagram.com/YOUR_HANDLE"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Instagram
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://facebook.com/YOUR_PAGE"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Facebook
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://tiktok.com/@YOUR_HANDLE"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    TikTok
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
