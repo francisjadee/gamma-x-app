@@ -335,16 +335,19 @@
 }, []);
 
         const handleLogin = (e) => {
-          e.preventDefault();
-          if (passwordInput === ACCESS_PASSWORD) {
-            setIsAuthed(true);
-            setError("");
-            setPasswordInput("");
-            localStorage.setItem("gx_authed", "true");
-          } else {
-            setError("Incorrect password. Try again.");
-          }
-        };
+  e.preventDefault();
+  if (passwordInput === ACCESS_PASSWORD) {
+    const oneHourFromNow = Date.now() + 60 * 60 * 1000; // 1 hour in ms
+    localStorage.setItem("gx_authed_until", String(oneHourFromNow));
+
+    setIsAuthed(true);
+    setError("");
+    setPasswordInput("");
+  } else {
+    setError("Incorrect password. Try again.");
+  }
+};
+
 
         if (!isAuthed) {
           return (
@@ -579,6 +582,7 @@
     </script>
   </body>
 </html>
+
 
 
 
